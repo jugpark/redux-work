@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import Presenter from "./presenter";
 
 const Container = (props) => {
+    const [listObj, setListObj] = useState({
+        list: [],
+        paginglist: [],
+        maxPage: 0,
+        splitedList: [],
+        columns: ["상품번호", "상품명", "브랜드", "상품내용", "가격", "평점", "재고"],
+        pagingSize: 10,
+        pageCount: 10,
+        start: 0,
+    })
     const [searchObj, setSearchObj] = useState({
         OptionList: [
             { value: null, label: "전체" },
@@ -13,11 +23,12 @@ const Container = (props) => {
         searchOption: null,
         searchValue: null,
     })
+
     useEffect(() => {
-        initAllList();
+        fetchList();
     }, [])
 
-    const initAllList = async () => {
+    const fetchList = async () => {
         const requestURL = 'https://dummyjson.com/products?limit=100';
         let requestFlag = false;
         fetch(requestURL)
@@ -32,15 +43,20 @@ const Container = (props) => {
             })
             .then(data => {
                 if (requestFlag == true) {
-                    console.log(data)
+                    setListObj({...listObj, list: data.products})
                 }
             });
     }
+
+    console.log(listObj)
 
     return (
         <Presenter
             searchObj={searchObj}
             setSearchObj={setSearchObj}
+            fetchList={fetchList}
+            listObj={listObj}
+            setListObj={setListObj}
         />
     );
 };

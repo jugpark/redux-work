@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Header from "../../components/header"
+import List from "../../components/list"
+import Pagination from "../../components/pagination"
 
 const Presenter = (props) => {
-    const { searchObj, setSearchObj } = props
+    const { searchObj, setSearchObj, fetchList, listObj, setListObj } = props
 
 
     return (
@@ -12,9 +14,17 @@ const Presenter = (props) => {
                     <Header
                         searchObj={searchObj}
                         setSearchObj={setSearchObj}
+                        fetchList={fetchList}
                     />
-                    <div className="body"></div>
-                    <div className="header"></div>
+                    <List
+                        listObj={listObj}
+                    />
+                    {listObj?.list?.length > 0 &&
+                        <Pagination
+                            listObj={listObj}
+                            setListObj={setListObj}
+                        />
+                    }
                 </div>
             </div>
         </>

@@ -4,14 +4,15 @@ import valueToLabel from "../common/functions/valueToLabel"
 
 const SearchSection = styled.div`
     display: flex;
-    width: calc(100% - 40px);
+    width: 100%;
     flex-direction: column;
     box-sizing: border-box;
-    position: fixed;
     border: 1px solid rgb(208, 212, 217);
     border-radius: 10px;
     padding: 20px;
     height: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    background-color: white;
 `;
 
 const Title = styled.div`
@@ -22,6 +23,7 @@ const Title = styled.div`
     align-items: center;
     font-size: 17px;
     font-weight: 600;
+    padding-left: 10px;
 `
 
 const Search = styled.div`
@@ -31,75 +33,108 @@ const Search = styled.div`
     margin-top: 20px;
 `
 
-const SelectBox = styled.div`
+const Select = styled.div`
     background-color: white;
-    border: 1px solid rgb(208, 212, 217);
-    width: 200px;
+    width: 150px;
     height: 100%;
 `
 
 const SelectedBox = styled.div`
     background-color: white;
-    width: 200px;
     height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    font-weight: 500;
+    justify-content: center;
+    border: 1px solid rgb(208, 212, 217);
+    border-radius: 10px;
+`
+
+const DropdownList = styled.div`
+    ${({ display }) => {
+        return display ? `display: flex` : `display: none`
+    }};
+    flex-direction: column;
+    position: absolute;
+    font-size: 17px;
+    font-weight: 500;
+    justify-content: center;
+    width: 150px;
+`
+
+const DropdownBox = styled.div`
+    padding: 10px;
+    display: flex;
+    border-radius: 10px;
+    border: 1px solid rgb(208, 212, 217);
+    background-color: white;
 `
 
 const InputBox = styled.input`
-    width: 200px;
-    background-color: #21262C;
-    border: 1px solid black;
+    width: 400px;
+    background-color: white;
+    border: 1px solid rgb(208, 212, 217);
     padding-left: 10px;
-    color: #C8D1D9;
+    color: black;
     font-size: 17px;
     font-weight: 500;
     border-radius: 10px;
+    margin-left: 20px;
 `
 const Button = styled.button`
-    width: 20px;
-    flex: 1;
+    width: 70px;
     color: #C8D1D9;
     font-size: 17px;
     font-weight: 700;
     border: 1px solid;
     border-radius: 10px;
     padding: 0px 10px 0px 10px;
-    background-color: transparent;
+    background-color: black;
     cursor: pointer;
+    margin-left: 20px;
 `
 
-const Header = ({ searchObj, setSearchObj }) => {
+const Header = ({ searchObj, setSearchObj, fetchList }) => {
     const { OptionList, title, searchOption, searchValue } = searchObj;
-    const [selectBoxDisplayFlag, setSelectBoxDisplayFlag] = useState(false);
+    const [dropDownListDisplayFlag, setDropDownListDisplayFlag] = useState(false);
 
     return (
         <SearchSection>
             <Title>{title}</Title>
             <div className="middleLine"></div>
             <Search>
-                <SelectBox>
-                    <SelectedBox onClick={() => {
-                        setSelectBoxDisplayFlag(!selectBoxDisplayFlag)
-                    }}>{valueToLabel(searchOption, OptionList)} <span>{`>`}</span></SelectedBox>
-                    <div style={{ display: `${selectBoxDisplayFlag == true ? "flex" : "none"}`, flexDirection: "column" }}>
-                        {OptionList?.map((ele) => {
+                <Select>
+                    <SelectedBox
+                        onClick={() => {
+                            setDropDownListDisplayFlag(!dropDownListDisplayFlag)
+                        }}>{valueToLabel(searchOption, OptionList)} <span style={{ marginLeft: 20 }}>{!dropDownListDisplayFlag ? "▿" : "▵"}</span>
+                    </SelectedBox>
+                    <DropdownList display={dropDownListDisplayFlag}>
+                        {OptionList?.map((ele, idx) => {
                             return (
-                                <div
+                                <DropdownBox
+                                    key={idx}
                                     onClick={() => {
                                         setSearchObj({ ...searchObj, searchOption: ele.value })
                                     }}>
                                     {ele.label}
-                                </div>
+                                </DropdownBox>
                             )
 
                         })}
-                    </div>
-                </SelectBox>
+                    </DropdownList>
+                </Select>
                 <InputBox
                     onChange={(event) => {
                         setSearchObj({ ...searchObj, searchValue: event.target.value })
                     }}
                     value={searchValue} />
-                <Button>조회버튼</Button>
+                <Button 
+                onClick={() => {
+                    fetchList();
+                }}
+                >조회</Button>
             </Search>
         </SearchSection>
     )
