@@ -20,6 +20,6 @@ export const listSlice = createSlice({
 })
 
 
-export const { } = listSlice.actions;
+export const { setList, setTotalCount } = listSlice.actions;
 
 export default listSlice.reducer;

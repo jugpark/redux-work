@@ -1,9 +1,22 @@
 import React, { useState } from "react";
+import Header from "../../components/header"
 
 const Presenter = (props) => {
+    const { searchObj, setSearchObj } = props
+
+
     return (
         <>
-        123
+            <div className="wrap">
+                <div className="main-content">
+                    <Header
+                        searchObj={searchObj}
+                        setSearchObj={setSearchObj}
+                    />
+                    <div className="body"></div>
+                    <div className="header"></div>
+                </div>
+            </div>
         </>
     );
 };
