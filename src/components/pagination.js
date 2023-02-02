@@ -47,19 +47,17 @@ const Pagination = () => {
         ],
         searchOption: 10,
     })
-    const [listObjExistFlag, setListObjExistFlag] = useState(sessionStorage.getItem("listObj") ? true : false)
 
     const listSplit = () => {
         const splited = {
             key: "splited",
-            exist: listObjExistFlag,
+            exist: sessionStorage.getItem("listObj") ? true : false,
             splitedList: []
         };
         for (let i = 0; i < list?.length; i += pageCount) {
             splited.splitedList.push(list.slice(i, i + pageCount));
         }
         dispatch(setListObj(splited));
-        setListObjExistFlag(true);
     }
 
     useEffect(() => {
