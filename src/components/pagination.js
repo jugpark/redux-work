@@ -37,31 +37,29 @@ const Button = styled.button`
 
 const Pagination = () => {
     const { listObj } = useSelector((state) => state.list)
-    const { list, pageCount, start, maxPage, splitedList } = listObj
+    const { list, pageCount, start, maxPage, splitedList, currentPage } = listObj
     const dispatch = useDispatch();
-    const [currentPage, setCurrentPage] = useState(0)
     const [pagingObj, setPagingObj] = useState({
         OptionList: [
-            { value: "10", label: "10" },
-            { value: "20", label: "20" },
-            { value: "50", label: "50" },
+            { value: 10, label: "10" },
+            { value: 20, label: "20" },
+            { value: 50, label: "50" },
         ],
-        searchOption: null,
+        searchOption: 10,
     })
-    // console.log(start)
-    // console.log(currentPage)
-    // console.log(splitedList)
-    // console.log(maxPage)
+    const [listObjExistFlag, setListObjExistFlag] = useState(sessionStorage.getItem("listObj") ? true : false)
 
     const listSplit = () => {
         const splited = {
             key: "splited",
+            exist: listObjExistFlag,
             splitedList: []
         };
         for (let i = 0; i < list?.length; i += pageCount) {
             splited.splitedList.push(list.slice(i, i + pageCount));
         }
-        dispatch(setListObj(splited))
+        dispatch(setListObj(splited));
+        setListObjExistFlag(true);
     }
 
     useEffect(() => {
@@ -82,10 +80,18 @@ const Pagination = () => {
     }, [currentPage])
 
     useEffect(() => {
-        if (list.length > 0) {
-            listSplit();
+        listSplit();
+    }, [list])
+
+    useEffect(() => {
+        if (pagingObj.searchOption != null) {
+            const pagingCount = {
+                key: "count",
+                pageCount: pagingObj.searchOption
+            }
+            dispatch(setListObj(pagingCount))
         }
-    }, [list.length])
+    })
 
     return (
         <PaginationSection display={splitedList?.length > 0 ? true : false}>
@@ -93,13 +99,32 @@ const Pagination = () => {
                 selectObj={pagingObj}
                 setSelectObj={setPagingObj}
             />
-            <Button display={start !== 0 ? true : false} onClick={() => { setCurrentPage(start - pageCount) }}>{`<`}</Button>
+            <Button
+                display={start !== 0 ? true : false}
+                onClick={() => {
+                    dispatch(setListObj({
+                        key: "currentChange",
+                        currentPage: start - pageCount
+                    }))
+                }}>{`<`}</Button>
             {Array(pageCount).fill().map((value, index) => {
                 return (
-                    <Button current={currentPage === start + index ? true : false} display={start + index + 1 <= maxPage ? true : false} onClick={() => { setCurrentPage(start + index) }}>{start + index + 1}</Button>
+                    <Button current={currentPage === start + index ? true : false} display={start + index + 1 <= maxPage ? true : false}
+                        onClick={() => {
+                            dispatch(setListObj({
+                                key: "currentChange",
+                                currentPage: start + index
+                            }))
+                        }}>{start + index + 1}</Button>
                 )
             })}
-            <Button display={start + 1 < maxPage ? true : false} onClick={() => { setCurrentPage(start + pageCount) }}>{`>`}</Button>
+            <Button display={start + 1 < maxPage ? true : false}
+                onClick={() => {
+                    dispatch(setListObj({
+                        key: "currentChange",
+                        currentPage: start + pageCount
+                    }))
+                }}>{`>`}</Button>
         </PaginationSection>
     );
 };

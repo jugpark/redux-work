@@ -23,9 +23,11 @@ const Presenter = (props) => {
                         fetchList={fetchList}
                     />
                     <div className="count">검색된 데이터 : {listObj?.list?.length} 건</div>
-                    <List />
                     {listObj?.list?.length > 0 &&
-                        <Pagination />
+                        <>
+                            <List />
+                            <Pagination />
+                        </>
                     }
                 </div>
             </div>

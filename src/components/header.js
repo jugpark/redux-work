@@ -60,8 +60,6 @@ const Button = styled.button`
 const Header = ({ searchObj, setSearchObj, fetchList }) => {
     const { title, searchValue } = searchObj;
 
-    console.log(searchObj)
-
     return (
         <SearchSection>
             <Title>{title}</Title>
