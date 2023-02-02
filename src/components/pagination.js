@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
+//components
+import Select from "./select";
+
+//redux
+import { useSelector, useDispatch } from "react-redux";
+import { setListObj } from "../redux/services/list/listSlice";
+
 const PaginationSection = styled.div`
     ${({ display }) => {
         return display ? `display: flex` : `display: none`
@@ -28,29 +35,49 @@ const Button = styled.button`
     align-items: center;
 `;
 
-const Pagination = ({ listObj, setListObj }) => {
-    const { list, pagingSize, pageCount, start, maxPage, splitedList } = listObj
+const Pagination = () => {
+    const { listObj } = useSelector((state) => state.list)
+    const { list, pageCount, start, maxPage, splitedList } = listObj
+    const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(0)
-    console.log(start)
-    console.log(currentPage)
-    console.log(splitedList)
-    console.log(maxPage)
+    const [pagingObj, setPagingObj] = useState({
+        OptionList: [
+            { value: "10", label: "10" },
+            { value: "20", label: "20" },
+            { value: "50", label: "50" },
+        ],
+        searchOption: null,
+    })
+    // console.log(start)
+    // console.log(currentPage)
+    // console.log(splitedList)
+    // console.log(maxPage)
 
     const listSplit = () => {
-        const splitedArray = [];
-
-        for (let i = 0; i < list?.length; i += pagingSize) {
-            splitedArray.push(list.slice(i, i + pagingSize));
+        const splited = {
+            key: "splited",
+            splitedList: []
+        };
+        for (let i = 0; i < list?.length; i += pageCount) {
+            splited.splitedList.push(list.slice(i, i + pageCount));
         }
-        setListObj({ ...listObj, splitedList: splitedArray, paginglist: splitedArray[0], maxPage: splitedArray.length })
+        dispatch(setListObj(splited))
     }
 
     useEffect(() => {
         if (currentPage % pageCount === 0) {
-            setListObj({ ...listObj, start: currentPage })
+            const equalObj = {
+                key: "equal",
+                currentPage: currentPage
+            }
+            dispatch(setListObj(equalObj))
         }
         if (currentPage !== null) {
-            setListObj({ ...listObj, paginglist: splitedList[currentPage] })
+            const notNullObj = {
+                key: "notNull",
+                paginglist: splitedList[currentPage]
+            }
+            dispatch(setListObj(notNullObj))
         }
     }, [currentPage])
 
@@ -62,6 +89,10 @@ const Pagination = ({ listObj, setListObj }) => {
 
     return (
         <PaginationSection display={splitedList?.length > 0 ? true : false}>
+            <Select
+                selectObj={pagingObj}
+                setSelectObj={setPagingObj}
+            />
             <Button display={start !== 0 ? true : false} onClick={() => { setCurrentPage(start - pageCount) }}>{`<`}</Button>
             {Array(pageCount).fill().map((value, index) => {
                 return (

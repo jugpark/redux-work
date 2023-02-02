@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
+
+//redux
+import { useSelector } from "react-redux";
+
+//components
 import Header from "../../components/header"
 import List from "../../components/list"
 import Pagination from "../../components/pagination"
 
 const Presenter = (props) => {
-    const { searchObj, setSearchObj, fetchList, listObj, setListObj } = props
+    const { listObj } = useSelector((state) => state.list)
+    const { searchObj, setSearchObj, fetchList } = props
 
 
     return (
@@ -16,14 +22,10 @@ const Presenter = (props) => {
                         setSearchObj={setSearchObj}
                         fetchList={fetchList}
                     />
-                    <List
-                        listObj={listObj}
-                    />
+                    <div className="count">검색된 데이터 : {listObj?.list?.length} 건</div>
+                    <List />
                     {listObj?.list?.length > 0 &&
-                        <Pagination
-                            listObj={listObj}
-                            setListObj={setListObj}
-                        />
+                        <Pagination />
                     }
                 </div>
             </div>

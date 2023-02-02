@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
+
+//redux
+import { useSelector } from "react-redux";
 
 const Table = styled.div`
     width: 100%;
     height: calc(100vh - 300px);
-    margin-top: 50px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     background-color: white;
@@ -28,7 +31,7 @@ const ColumnHeader = styled.div`
 
 const Column = styled.div`
     ${({ description }) => {
-    return description ? `text-overflow: ellipsis; white-space: nowrap; overflow: hidden;` : ``
+        return description ? `text-overflow: ellipsis; white-space: nowrap; overflow: hidden;` : ``
     }};
     width: 100%;
     height: 50px;
@@ -38,9 +41,9 @@ const Column = styled.div`
     border-bottom: 1px solid rgb(208, 212, 217);
 `
 
-const List = ({ listObj }) => {
+const List = () => {
+    const { listObj } = useSelector((state) => state.list)
     const { paginglist, columns } = listObj
-    console.log(paginglist)
 
     return (
         <Table>

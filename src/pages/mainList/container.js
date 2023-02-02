@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import Presenter from "./presenter";
 
+//redux
+import { useDispatch } from "react-redux";
+import { setListObj } from "../../redux/services/list/listSlice";
+
 const Container = (props) => {
-    const [listObj, setListObj] = useState({
-        list: [],
-        paginglist: [],
-        maxPage: 0,
-        splitedList: [],
-        columns: ["상품번호", "상품명", "브랜드", "상품내용", "가격", "평점", "재고"],
-        pagingSize: 10,
-        pageCount: 10,
-        start: 0,
-    })
+    const dispatch = useDispatch();
     const [searchObj, setSearchObj] = useState({
         OptionList: [
             { value: null, label: "전체" },
-            { value: "productName", label: "상품명" },
+            { value: "title", label: "상품명" },
             { value: "brand", label: "브랜드" },
-            { value: "productDescription", label: "상품내용" },
+            { value: "description", label: "상품내용" },
         ],
         title: "상품검색",
         searchOption: null,
@@ -33,7 +28,7 @@ const Container = (props) => {
         let requestFlag = false;
         fetch(requestURL)
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     requestFlag = true;
                     return res.json();
                 }
@@ -42,21 +37,36 @@ const Container = (props) => {
                 }
             })
             .then(data => {
-                if (requestFlag == true) {
-                    setListObj({...listObj, list: data.products})
+                if (requestFlag === true) {
+                    const list = {
+                        key: "list",
+                        list: data.products
+                    }
+                    if (searchObj.searchOption != null && searchObj.searchValue != null) {
+                        const filtered = {
+                            key: "filtered",
+                            list: data.products.filter((obj) => { return obj[searchObj.searchOption].includes(searchObj.searchValue) })
+                        }
+                        if (filtered.list.length > 0) {
+                            dispatch(setListObj(filtered))
+                        }
+                        else {
+                            alert("검색된 값이 존재하지 않습니다.")
+                            dispatch(setListObj(list))
+                        }
+                    }
+                    else {
+                        dispatch(setListObj(list))
+                    }
                 }
             });
     }
-
-    console.log(listObj)
 
     return (
         <Presenter
             searchObj={searchObj}
             setSearchObj={setSearchObj}
             fetchList={fetchList}
-            listObj={listObj}
-            setListObj={setListObj}
         />
     );
 };
