@@ -40,6 +40,7 @@ const Container = (props) => {
             dispatch(setListObjInitialState(JSON.parse(sessionStorage.getItem("listObj"))))
         } else {
             try {
+                sessionStorage.removeItem("listObj")
                 const requestURL = 'https://dummyjson.com/products?limit=100';
                 let requestFlag = false;
                 fetch(requestURL)
@@ -77,7 +78,7 @@ const Container = (props) => {
                         }
                     })
             } catch (error) {
-                console.log(error)
+                alert(error)
             }
         }
     }
